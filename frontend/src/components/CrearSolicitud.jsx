@@ -43,7 +43,7 @@ export default function CrearAdmin() {
                                     </div>
                                     <br />
                                     <button type="submit" className="btn btn-outline-info">
-                                        <span class="fa fa-save"></span>Registrarse
+                                        <span className="fa fa-save"></span>Registrarse
                                     </button>
                                 </form>
                             </div>

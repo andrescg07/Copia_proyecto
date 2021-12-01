@@ -1,32 +1,40 @@
-const adminCtrl ={}
+const adminCtrl = {}
 const Admin = require('../models/Admin.model')
-const bcrypt= require('bcryptjs')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-adminCtrl.crearAdmin= async (req,res)=>{
-    const {nombre,correo,contrasena}= req.body 
+adminCtrl.crearAdmin = async (req, res) => {
+    const { nombre, correo, contrasena } = req.body
     const NuevoAdmin = new Admin({
         nombre,
         correo,
         contrasena
     })
 
-    const correoAdmin = await Admin.findOne({correo:correo})
-    if(correoAdmin){
+    const correoAdmin = await Admin.findOne({ correo: correo })
+    if (correoAdmin) {
         res.json({
             mensaje: 'El correo ya existe'
         })
+    } else if (correoAdmin === "") {
+        res.json({
+            mensaje: 'Debe agregar un correo'
+        })
+    } else if(contrasena === ""){
+        res.json({
+            mensaje: 'Debe agregar una contraseña'
+        })
     }
 
-    else{
+    else {
 
-        NuevoAdmin.contrasena = await bcrypt.hash(contrasena,10)
-        const token = jwt.sign({_id:NuevoAdmin._id},'Clave Secreta')
+        NuevoAdmin.contrasena = await bcrypt.hash(contrasena, 10)
+        const token = jwt.sign({ _id: NuevoAdmin._id }, 'Clave Secreta')
         await NuevoAdmin.save()
         res.json({
-            mensaje:'Usuario Admin creado',
+            mensaje: 'Usuario Admin creado',
             id: NuevoAdmin._id,
-            nombre:NuevoAdmin.nombre,
+            nombre: NuevoAdmin.nombre,
             token
 
         })
@@ -34,33 +42,39 @@ adminCtrl.crearAdmin= async (req,res)=>{
     }
 }
 
-adminCtrl.login= async(req,res)=>{
-    const{correo, contrasena} = req.body
-    const admin = await Admin.findOne({correo:correo})
-    if(!admin){
+adminCtrl.login = async (req, res) => {
+    const { correo, contrasena } = req.body
+    const admin = await Admin.findOne({ correo: correo })
+    if (!admin) {
         return res.json({
-            mensaje:'El correo ingresado no esta registrado'
+            mensaje: 'El correo ingresado no esta registrado'
         })
     }
 
-    const validacionClave = await bcrypt.compare(contrasena,admin.contrasena);
-    if(validacionClave){
-        
-        const token = jwt.sign({_id: admin._id},'Clave token')
+    const validacionClave = await bcrypt.compare(contrasena, admin.contrasena);
+    if (validacionClave) {
+
+        const token = jwt.sign({ _id: admin._id }, 'Clave token')
         res.json({
-            mensaje:'Has iniciado sesión, !Bienvenido!',
-            id:admin._id,
+            mensaje: 'Has iniciado sesión, !Bienvenido!',
+            id: admin._id,
             nombre: admin.nombre,
             token
         })
 
     }
 
-    else{
+    else {
         res.json({
             mensaje: '¡Contraseña incorrecta!'
         })
     }
 }
 
-module.exports=adminCtrl
+adminCtrl.obtener = async (req, res) => {
+
+    const obtenerAdministradores = await Admin.find()
+    res.json(obtenerAdministradores)
+}
+
+module.exports = adminCtrl
