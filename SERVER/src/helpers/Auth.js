@@ -1,6 +1,6 @@
 const Autorizacion={}
 const jwt = require('jsonwebtoken')
-const { token } = require('morgan')
+// const { token } = require('morgan')
 
 Autorizacion.verificarToken = (req,res, next)=>{
    
@@ -10,20 +10,12 @@ Autorizacion.verificarToken = (req,res, next)=>{
         })
    }
 
-   const tokenNulo= req.headers.autorizacion
-   if(tokenNulo === null){
+   const token= req.headers.autorizacion
+   if(token === null){
        res.json({
            mensaje: '¡No esta autorizado!'
        })
    }
-
-   jwt.verify(token, 'Codigo seguridad',(error,resultado)=>{
-       if(error){
-           return res.json({
-               mensaje:'¡No estas autorizado!'
-           })
-       }
-   })
 
    next();
 

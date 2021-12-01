@@ -17,6 +17,7 @@ app.use(cors({origen: '*'}))
 //Middlewares
 app.use('/admin',require('./routes/Admin.routes'))
 app.use('/solicitud',require ('./routes/Solicitud.routes'))
+app.use('/apartamento',require ('./routes/Apartamento.route'))
 
 
 app.listen(app.get('Port'),()=>{
